@@ -6,6 +6,7 @@
 
 // Helper functions
 bool get_fifo_empty(mc_fifo_t *fifo, bool _empty = false, uint32_t fifo_id = 0x0);
+uint32_t get_fifo_size(mc_fifo_t *fifo, uint32_t fifo_id = 0x0);
 bool get_fifo_full(mc_fifo_t *fifo, bool _full = false, uint32_t fifo_id = 0x0);
 void set_fifo_full(mc_fifo_t *fifo, uint32_t fifo_id);
 
@@ -170,6 +171,16 @@ bool get_fifo_empty(mc_fifo_t *fifo, bool _empty, uint32_t fifo_id) {
 }
 
 /*
+ * Returns the number of elements in a given 32-bit FIFO
+ * @params[in] fifo - 128-bit FIFO to query size
+ * @params[in] fifo_id - Chooses which 32-bit FIFO's size is queried
+ * @returns number of elements in the FIFO
+ */
+uint32_t get_fifo_size(mc_fifo_t *fifo, uint32_t fifo_id) {
+  return fifo->fifo[index_map[fifo_id]].size();
+}
+
+/*
  * Returns if a given 32-bit or 128-bit FIFO is full
  * @params[in] fifo - 128-bit FIFO to check fullness
  * @params[in] _empty - Set to true if you need the fullness of a given 32-bit FIFO
@@ -190,13 +201,15 @@ bool get_fifo_full(mc_fifo_t *fifo, bool _full, uint32_t fifo_id) {
 
 /*
  * Sets the fullness of a given 32-bit FIFO
- * This is a single element FIFO, so the FIFO is full even if there is only 1 element
  * @params[in] fifo - 128-bit FIFO to set fullness
  * @params[in] fifo_id - Chooses which 32-bit FIFO's fullness to set
  */
 void set_fifo_full(mc_fifo_t *fifo, uint32_t fifo_id) {
-  bool is_fifo_empty = get_fifo_empty(fifo, true, fifo_id);
-  fifo->full[index_map[fifo_id]] = !is_fifo_empty;
+  uint32_t fifo_size = get_fifo_size(fifo, fifo_id);
+  if ((fifo_size == FIFO_MAX_ELEMENTS))
+    fifo->full[index_map[fifo_id]] = true;
+  else
+    fifo->full[index_map[fifo_id]] = false;
 }
 
 /*

@@ -22,6 +22,11 @@ extern "C" {
 // NOTE: Keep this in sync with the hardware implementation
 #define MAX_CREDITS 15
 
+// All 128-bit FIFOs can have a maximum of N elements each
+#ifndef FIFO_MAX_ELEMENTS
+#define FIFO_MAX_ELEMENTS 16
+#endif
+
 // NOTE: The host does not respond to the manycore
 
 typedef union mc_pkt_t {
@@ -37,7 +42,7 @@ typedef enum mc_fifo_type_t {
   FIFO_MC_TO_HOST_RESP = 2
 } mc_fifo_type_t;
 
-// All FIFOs are 1 element FIFOs. These aim to mimic the SIPOs and PISOs in the manycore bridge hardware
+// All FIFOs are N element FIFOs. These aim to mimic the SIPOs and PISOs in the manycore bridge hardware
 typedef struct mc_fifo_t {
   // 4 32-bit FIFOs to capture the 128-bit manycore packets
   std::vector<std::queue<uint32_t>> fifo;
