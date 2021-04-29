@@ -274,11 +274,11 @@ static uint32_t manycore_read(void *opaque, uint32_t offset, int size_log2) {
 				uint32_t fifo_id = offset & 0x0000f;
 				mc_fifo_type_t fifo_type = FIFO_MC_TO_HOST_REQ;
 				bool fifo_read_status;
-				uint32_t* fifo_read_val;
+				uint32_t fifo_read_val;
 				// Read the FIFO until the read succeeds
-				fifo_read_status = mc_fifo_read(fifo_type, fifo_id, fifo_read_val);
+				fifo_read_status = mc_fifo_read(fifo_type, fifo_id, &fifo_read_val);
                 if (fifo_read_status)
-                    c = *fifo_read_val;
+                    c = fifo_read_val;
                 else
                     c = 0xFFFF;
 			}
@@ -297,10 +297,10 @@ static uint32_t manycore_read(void *opaque, uint32_t offset, int size_log2) {
 				uint32_t fifo_id = offset & 0x000f;
 				mc_fifo_type_t fifo_type = FIFO_MC_TO_HOST_RESP;
 				int fifo_read_status = -1;
-				uint32_t* fifo_read_val;
-                fifo_read_status = mc_fifo_read(fifo_type, fifo_id, fifo_read_val);
+				uint32_t fifo_read_val;
+                fifo_read_status = mc_fifo_read(fifo_type, fifo_id, &fifo_read_val);
 				if (fifo_read_status)
-                    c = *fifo_read_val;
+                    c = fifo_read_val;
                 else
                     c = 0xFFFF;
 			}
