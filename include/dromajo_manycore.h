@@ -73,7 +73,7 @@ void mc_fifo_init(mc_fifo_t *fifo);
 
 /*
  * Returns if the FIFO is full
- * A 0 indicates the FIFO is empty
+ * A 0 indicates the FIFO is not full
  * A 1 indicates the FIFO is full
  * @param[in] type - Type of FIFO to query
  * @param[in] _full - Set to true if you need the fullness of a specific 32-bit FIFO
@@ -81,6 +81,17 @@ void mc_fifo_init(mc_fifo_t *fifo);
  * @returns FIFO full status
  */
 bool mc_is_fifo_full(mc_fifo_type_t type, bool _full = false, uint32_t fifo_id = 0x0);
+
+/*
+ * Returns if the FIFO is empty
+ * A 0 indicates the FIFO is not empty
+ * A 1 indicates the FIFO is empty
+ * @param[in] type - Type of FIFO to query
+ * @param[in] _full - Set to true if you need the fullness of a specific 32-bit FIFO
+ * @param[in] fifo_id - Chooses which 32-bit FIFO's fullness to return
+ * @returns FIFO empty status
+ */
+bool mc_is_fifo_empty(mc_fifo_type_t type, bool _empty = false, uint32_t fifo_id = 0x0);
 
 /*
  * Write to the desired FIFO

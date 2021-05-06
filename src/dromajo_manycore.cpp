@@ -3,6 +3,7 @@
  */
 
 #include "dromajo_manycore.h"
+#include <iostream>
 
 // Helper functions
 bool get_fifo_empty(mc_fifo_t *fifo, bool _empty = false, uint32_t fifo_id = 0x0);
@@ -25,8 +26,8 @@ bool fifo_read(mc_fifo_t *fifo, uint32_t fifo_id, uint32_t *val);
  */
 void mc_fifo_init(mc_fifo_t *fifo) {
   for (int i = 0; i < 4; i++) {
-    fifo->fifo[i] = std::queue<uint32_t>();
-    fifo->full[i] = false;
+    fifo->fifo.push_back(std::queue<uint32_t>());
+    fifo->full.push_back(false);
   }
   fifo->credits = MAX_CREDITS;
   fifo->init = true;
@@ -61,6 +62,37 @@ bool mc_is_fifo_full(mc_fifo_type_t type, bool _full, uint32_t fifo_id) {
     break;
   }
   return full;
+}
+
+/*
+ * Returns if the FIFO is empty
+ * A 0 indicates the FIFO is not empty
+ * A 1 indicates the FIFO is empty
+ * @param[in] type - Type of FIFO to query
+ * @param[in] _full - Set to true if you need the fullness of a specific 32-bit FIFO
+ * @param[in] fifo_id - Chooses which 32-bit FIFO's fullness to return
+ * @returns FIFO empty status
+ */
+bool mc_is_fifo_empty(mc_fifo_type_t type, bool _empty, uint32_t fifo_id) {
+  bool empty;
+  switch (type) {
+    case FIFO_HOST_TO_MC_REQ:
+      empty = get_fifo_empty(host_to_mc_req_fifo, _empty, fifo_id);
+    break;
+    case FIFO_MC_TO_HOST_REQ:
+      empty = get_fifo_empty(mc_to_host_req_fifo, _empty, fifo_id);
+    break;
+    case FIFO_MC_TO_HOST_RESP:
+      empty = get_fifo_empty(mc_to_host_resp_fifo, _empty, fifo_id);
+    break;
+    default:
+    {
+      printf("Undefined/Unknown FIFO type!\nExiting...\n");
+      exit(-1);
+    }
+    break;
+  }
+  return empty;
 }
 
 /*
@@ -163,9 +195,10 @@ bool get_fifo_empty(mc_fifo_t *fifo, bool _empty, uint32_t fifo_id) {
     return fifo->fifo[index_map[fifo_id]].empty();
   else {
     std::vector<std::queue<uint32_t>>::iterator it;
-    bool is_empty = true;
-    for(it = fifo->fifo.begin(); it != fifo->fifo.end(); ++it)
-      is_empty &= it->empty();
+    bool is_empty;
+    for(it = fifo->fifo.begin(); it != fifo->fifo.end(); ++it) {
+      is_empty |= it->empty();
+    }
     return is_empty;
   }
 }
@@ -275,7 +308,7 @@ bool fifo_read(mc_fifo_t *fifo, uint32_t fifo_id, uint32_t *val) {
   // Pop the head of the FIFO
   fifo->fifo[index_map[fifo_id]].pop();
   // Set the corresponding 32-bit FIFO's full bit 
-  // Since the FIFO is empty now, this will set the full bit to zero
+  // If the FIFO is empty, this will set the full bit to zero
   set_fifo_full(fifo, fifo_id);
   return true;
 }
