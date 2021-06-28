@@ -283,8 +283,6 @@ static uint32_t manycore_read(void *opaque, uint32_t offset, int size_log2) {
       case MANYCORE_MC_REQ_ENTRIES_ADDR:
       {
         mc_fifo_type_t fifo_type = FIFO_MC_TO_HOST_REQ;
-        // FIFO state == 0 --> FIFO empty
-        // FIFO state == 1 --> FIFO has elements
         bool is_fifo_empty = mc_is_fifo_empty(fifo_type);
         c = is_fifo_empty ? 0 : 1;
       }

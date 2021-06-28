@@ -20,7 +20,7 @@ bool fifo_read(mc_fifo_t *fifo, uint32_t fifo_id, uint32_t *val);
  * This function 
  *    sets the full vector of the FIFO to all zeros (all FIFOs empty at the start)
  *    defines the 4 32-bit FIFOs
- *    sets the credits to the maximum value
+ *    sets the credits used to the minimum value
  *    sets the init field to True
  * @param[in] fifo - FIFO to initialize
  */
@@ -29,7 +29,7 @@ void mc_fifo_init(mc_fifo_t *fifo) {
     fifo->fifo.push_back(std::queue<uint32_t>());
     fifo->full.push_back(false);
   }
-  fifo->credits = MAX_CREDITS;
+  fifo->credits = 0;
   fifo->init = true;
 }
 
@@ -43,7 +43,7 @@ void mc_fifo_init(mc_fifo_t *fifo) {
  * @returns FIFO full status
  */
 bool mc_is_fifo_full(mc_fifo_type_t type, bool _full, uint32_t fifo_id) {
-  bool full;
+  bool full= false;
   switch (type) {
     case FIFO_HOST_TO_MC_REQ:
       full = get_fifo_full(host_to_mc_req_fifo, _full, fifo_id);
@@ -74,7 +74,7 @@ bool mc_is_fifo_full(mc_fifo_type_t type, bool _full, uint32_t fifo_id) {
  * @returns FIFO empty status
  */
 bool mc_is_fifo_empty(mc_fifo_type_t type, bool _empty, uint32_t fifo_id) {
-  bool empty;
+  bool empty = false;
   switch (type) {
     case FIFO_HOST_TO_MC_REQ:
       empty = get_fifo_empty(host_to_mc_req_fifo, _empty, fifo_id);
@@ -105,7 +105,7 @@ bool mc_is_fifo_empty(mc_fifo_type_t type, bool _empty, uint32_t fifo_id) {
  *  true --> Write was successful
  */
 bool mc_fifo_write(mc_fifo_type_t type, uint32_t fifo_id, uint32_t val) {
-  bool fifo_write_success;
+  bool fifo_write_success = false;
   switch (type) {
     case FIFO_HOST_TO_MC_REQ:
       fifo_write_success = fifo_write(host_to_mc_req_fifo, fifo_id, val);
@@ -136,7 +136,7 @@ bool mc_fifo_write(mc_fifo_type_t type, uint32_t fifo_id, uint32_t val) {
  *  true --> Read was successful
  */
 bool mc_fifo_read(mc_fifo_type_t type, uint32_t fifo_id, uint32_t *val) {
-  bool fifo_read_success;
+  bool fifo_read_success = false;
   switch (type) {
     case FIFO_HOST_TO_MC_REQ:
       fifo_read_success = fifo_read(host_to_mc_req_fifo, fifo_id, val);
@@ -164,7 +164,7 @@ bool mc_fifo_read(mc_fifo_type_t type, uint32_t fifo_id, uint32_t *val) {
  * @returns the remaining FIFO credits
  */
 int mc_fifo_get_credits(mc_fifo_type_t type) {
-  int credits;
+  int credits = 0;
   switch (type) {
     case FIFO_HOST_TO_MC_REQ:
       credits = get_fifo_credits(host_to_mc_req_fifo);
@@ -195,7 +195,7 @@ bool get_fifo_empty(mc_fifo_t *fifo, bool _empty, uint32_t fifo_id) {
     return fifo->fifo[index_map[fifo_id]].empty();
   else {
     std::vector<std::queue<uint32_t>>::iterator it;
-    bool is_empty;
+    bool is_empty = false;
     for(it = fifo->fifo.begin(); it != fifo->fifo.end(); ++it) {
       is_empty |= it->empty();
     }

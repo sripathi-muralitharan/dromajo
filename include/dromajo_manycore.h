@@ -20,12 +20,12 @@ extern "C" {
 
 // Maximum number of credits for requests from the host to the manycore
 // NOTE: Keep this in sync with the hardware implementation
-#define MAX_CREDITS 15
+#define MAX_CREDITS 32
 #define RW_FAIL_CODE 0xFFFFFFFF
 
 // All 128-bit FIFOs can have a maximum of N elements each
 #ifndef FIFO_MAX_ELEMENTS
-#define FIFO_MAX_ELEMENTS 16
+#define FIFO_MAX_ELEMENTS 32
 #endif
 
 // NOTE: The host does not respond to the manycore
