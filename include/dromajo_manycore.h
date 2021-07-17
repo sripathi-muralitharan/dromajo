@@ -64,7 +64,7 @@ extern mc_fifo_t *mc_to_host_resp_fifo;
 // FIFO ID --> FIFO Index map
 static std::map<uint32_t, int> index_map {{0x0, 0}, {0x4, 1}, {0x8, 2}, {0xc, 3}};
 
-////////////////////////// RISC-V Host Interface //////////////////////////
+/***************************** Manycore FIFO API *****************************/
 
 /*
  * Initializes all FIFOs

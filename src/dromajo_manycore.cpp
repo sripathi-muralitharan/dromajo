@@ -15,6 +15,8 @@ int get_fifo_credits(mc_fifo_t *fifo);
 bool fifo_write(mc_fifo_t *fifo, uint32_t fifo_id, uint32_t val);
 bool fifo_read(mc_fifo_t *fifo, uint32_t fifo_id, uint32_t *val);
 
+/***************************** Manycore FIFO API *****************************/
+
 /*
  * Initializes all FIFOs
  * This function 
@@ -101,7 +103,7 @@ bool mc_is_fifo_empty(mc_fifo_type_t type, bool _empty, uint32_t fifo_id) {
  * @param[in] offset - Chooses which 32-bit FIFO to write
  * @param[in] val - The 32-bit value to be written
  * @return FIFO write status
- *  false --> Write was unsuccesful
+ *  false --> Write was unsuccessful
  *  true --> Write was successful
  */
 bool mc_fifo_write(mc_fifo_type_t type, uint32_t fifo_id, uint32_t val) {
@@ -132,7 +134,7 @@ bool mc_fifo_write(mc_fifo_type_t type, uint32_t fifo_id, uint32_t val) {
  * @param[in] val - Pointer to store the 32-bit read value 
  * @param[in] type - Type of FIFO to read
  * @return FIFO read status
- *  false --> Read was unsuccesful
+ *  false --> Read was unsuccessful
  *  true --> Read was successful
  */
 bool mc_fifo_read(mc_fifo_type_t type, uint32_t fifo_id, uint32_t *val) {
@@ -182,6 +184,8 @@ int mc_fifo_get_credits(mc_fifo_type_t type) {
   }
   return credits;
 }
+
+/***************************** FIFO Helper Functions *****************************/
 
 /*
  * Returns if a given 32-bit or 128-bit FIFO is empty
